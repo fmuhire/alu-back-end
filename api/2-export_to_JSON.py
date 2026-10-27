@@ -2,7 +2,6 @@
 """Export an employee's TODO list to a JSON file."""
 
 import json
-import os
 import sys
 
 import requests
@@ -36,10 +35,7 @@ if __name__ == "__main__":
         for todo in todos
     ]
 
-    output_file = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        "{}.json".format(employee_id)
-    )
-
-    with open(output_file, "w", encoding="utf-8") as json_file:
+    with open(
+        "{}.json".format(employee_id), "w", encoding="utf-8"
+    ) as json_file:
         json.dump({str(employee_id): tasks}, json_file)
