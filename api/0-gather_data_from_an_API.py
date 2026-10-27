@@ -1,38 +1,20 @@
 #!/usr/bin/python3
-"""Gather data from an API for an employee's TODO list."""
-
+"""Display an employee's TODO list progress using a REST API."""
 import requests
 import sys
 
 
 if __name__ == "__main__":
-    employee_id = int(sys.argv[1])
+    employee_id = sys.argv[1]
+    base_url = "https://jsonplaceholder.typicode.com"
 
-    base_url = "https://jsonplaceholder.typicode.com/"
+    user = requests.get("{}/users/{}".format(base_url, employee_id)).json()
+    todos = requests.get("{}/todos".format(base_url),
+                         params={"userId": employee_id}).json()
 
-    user_response = requests.get(
-        "{}users/{}".format(base_url, employee_id)
-    )
-    todos_response = requests.get(
-        "{}todos".format(base_url),
-        params={"userId": employee_id}
-    )
+    done = [todo for todo in todos if todo.get("completed")]
 
-    user_response.raise_for_status()
-    todos_response.raise_for_status()
-
-    employee = user_response.json()
-    todos = todos_response.json()
-
-    completed_tasks = [
-        task for task in todos if task["completed"]
-    ]
-
-    print(
-        "Employee {} is done with tasks({}/{}):".format(
-            employee["name"], len(completed_tasks), len(todos)
-        )
-    )
-
-    for task in completed_tasks:
-        print("\t {}".format(task["title"]))
+    print("Employee {} is done with tasks({}/{}):".format(
+        user.get("name"), len(done), len(todos)))
+    for todo in done:
+        print("\t {}".format(todo.get("title")))
